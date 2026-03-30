@@ -117,13 +117,57 @@ function isGuide()
     return $user && $user->isGuide();
 }
 
+function setFlash(string $key, string $message): void
+{
+    startSession();
+    $_SESSION['_flash'][$key] = $message;
+}
+
+function getFlash(string $key): ?string
+{
+    startSession();
+    if (!isset($_SESSION['_flash'][$key])) {
+        return null;
+    }
+
+    $message = $_SESSION['_flash'][$key];
+    unset($_SESSION['_flash'][$key]);
+    return $message;
+}
+
+function getCart(): array
+{
+    startSession();
+    if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
+
+    return $_SESSION['cart'];
+}
+
+function saveCart(array $cart): void
+{
+    startSession();
+    $_SESSION['cart'] = $cart;
+}
+
+function cartCount(): int
+{
+    $cart = getCart();
+    $count = 0;
+    foreach ($cart as $item) {
+        $count += (int) ($item['quantity'] ?? 0);
+    }
+    return $count;
+}
+
 // Yêu cầu đăng nhập: nếu chưa đăng nhập thì chuyển hướng về trang login
 // @param string $redirectUrl URL chuyển hướng sau khi đăng nhập (mặc định là trang hiện tại)
 function requireLogin($redirectUrl = null)
 {
     if (!isLoggedIn()) {
         $redirect = $redirectUrl ?: $_SERVER['REQUEST_URI'];
-        header('Location: ' . BASE_URL . '?act=login&redirect=' . urlencode($redirect));
+        header('Location: ' . BASE_URL . 'login?redirect=' . urlencode($redirect));
         exit;
     }
 }

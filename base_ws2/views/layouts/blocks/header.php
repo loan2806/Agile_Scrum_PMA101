@@ -13,34 +13,12 @@
     <!--end::Start Navbar Links-->
     <!--begin::End Navbar Links-->
     <ul class="navbar-nav ms-auto">
-      <!--begin::Notifications Dropdown Menu-->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-bs-toggle="dropdown" href="#">
-          <i class="bi bi-bell-fill"></i>
-          <span class="navbar-badge badge text-bg-warning">15</span>
+      <li class="nav-item">
+        <a class="nav-link" href="<?= BASE_URL ?>cart">
+          <i class="bi bi-cart3"></i>
+          <span class="navbar-badge badge text-bg-warning"><?= cartCount() ?></span>
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-          <span class="dropdown-item dropdown-header">15 Thông báo</span>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="bi bi-envelope me-2"></i> 4 tin nhắn mới
-            <span class="float-end text-secondary fs-7">3 mins</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="bi bi-people-fill me-2"></i> 8 Liên hệ mới
-            <span class="float-end text-secondary fs-7">12 hours</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="bi bi-file-earmark-fill me-2"></i> 3 báo cáo mới
-            <span class="float-end text-secondary fs-7">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer"> Xem tất cả thông báo </a>
-        </div>
       </li>
-      <!--end::Notifications Dropdown Menu-->
       <!--begin::Fullscreen Toggle-->
       <li class="nav-item">
         <a class="nav-link" href="#" data-lte-toggle="fullscreen">
