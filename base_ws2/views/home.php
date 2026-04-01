@@ -1,5 +1,6 @@
 <?php ob_start(); ?>
 <div class="container py-4">
+
   <section class="hero p-4 p-md-5 mb-4">
     <div class="row align-items-center">
       <div class="col-md-8">
@@ -36,11 +37,11 @@
   </div>
 
   <?php
-    $sections = [
-      'Trái ngon hôm nay' => $featuredProducts ?? [],
-      'Trái cây Việt Nam' => $vietnamProducts ?? [],
-      'Trái cây nhập khẩu' => $importedProducts ?? [],
-    ];
+  $sections = [
+    'Trái ngon hôm nay' => $featuredProducts ?? [],
+    'Trái cây Việt Nam' => $vietnamProducts ?? [],
+    'Trái cây nhập khẩu' => $importedProducts ?? [],
+  ];
   ?>
   <?php foreach ($sections as $label => $products): ?>
     <h3 class="section-title"><?= $label ?></h3>
@@ -59,7 +60,9 @@
           </div>
         <?php endforeach; ?>
       <?php else: ?>
-        <div class="col-12"><div class="alert alert-light border">Chưa có dữ liệu.</div></div>
+        <div class="col-12">
+          <div class="alert alert-light border">Chưa có dữ liệu.</div>
+        </div>
       <?php endif; ?>
     </div>
   <?php endforeach; ?>
