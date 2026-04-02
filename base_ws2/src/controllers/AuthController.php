@@ -24,6 +24,92 @@ class AuthController
         ]);
     }
 
+    // Hiển thị form đăng ký
+    public function register()
+    {
+        if (isLoggedIn()) {
+            header('Location: ' . BASE_URL . 'home');
+            exit;
+        }
+
+        view('auth.register', [
+            'title' => 'Đăng ký tài khoản',
+        ]);
+    }
+
+    // Xử lý đăng ký
+    public function storeRegister()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . 'register');
+            exit;
+        }
+
+        $fullname = trim($_POST['fullname'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $confirm = $_POST['password_confirmation'] ?? '';
+
+        $errors = [];
+        if ($fullname === '') {
+            $errors[] = 'Vui lòng nhập họ tên';
+        }
+        if ($email === '') {
+            $errors[] = 'Vui lòng nhập email';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Email không hợp lệ';
+        }
+        if (strlen($password) < 6) {
+            $errors[] = 'Mật khẩu phải từ 6 ký tự';
+        }
+        if ($password !== $confirm) {
+            $errors[] = 'Xác nhận mật khẩu không khớp';
+        }
+
+        $db = getDB();
+        if ($db === null) {
+            $errors[] = 'Không thể kết nối cơ sở dữ liệu';
+        }
+
+        if (empty($errors) && $db !== null) {
+            $check = $db->prepare('SELECT user_id FROM users WHERE email = ? LIMIT 1');
+            $check->execute([$email]);
+            if ($check->fetch()) {
+                $errors[] = 'Email đã tồn tại, vui lòng dùng email khác';
+            }
+        }
+
+        if (!empty($errors)) {
+            view('auth.register', [
+                'title' => 'Đăng ký tài khoản',
+                'errors' => $errors,
+                'fullname' => $fullname,
+                'email' => $email,
+            ]);
+            return;
+        }
+
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $insert = $db->prepare('INSERT INTO users (username, email, password, role, status) VALUES (?, ?, ?, ?, 1)');
+        $insert->execute([$fullname, $email, $hash, 'user']);
+        $userId = (int) $db->lastInsertId();
+
+        $customerStmt = $db->prepare('INSERT INTO customers (fullname, email, phone, address, user_id) VALUES (?, ?, ?, ?, ?)');
+        $customerStmt->execute([$fullname, $email, '', '', $userId]);
+
+        $user = new User([
+            'id' => $userId,
+            'name' => $fullname,
+            'email' => $email,
+            'role' => 'user',
+            'status' => 1,
+        ]);
+        loginUser($user);
+
+        header('Location: ' . BASE_URL . 'home');
+        exit;
+    }
+
     // Xử lý đăng nhập (nhận dữ liệu từ form POST)
     public function checkLogin()
     {

@@ -17,11 +17,11 @@
     <nav class="mt-2">
       <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
         
-        <!-- Trang chu -->
+        <!-- Trang chủ -->
         <li class="nav-item">
           <a href="<?= BASE_URL . 'home' ?>" class="nav-link">
             <i class="nav-icon bi bi-speedometer"></i>
-            <p>San pham</p>
+            <p>Sản phẩm (khách)</p>
           </a>
         </li>
 
@@ -33,12 +33,13 @@
         </li>
 
         <?php if (isAdmin()): ?>
-        <li class="nav-item">
-          <a href="<?= BASE_URL . 'home' ?>" class="nav-link">
-            <i class="nav-icon bi bi-person-gear"></i>
-            <p>Quan tri</p>
-          </a>
-        </li>
+          <li class="nav-header">QUẢN TRỊ</li>
+          <li class="nav-item">
+            <a href="<?= BASE_URL . 'admin/products' ?>" class="nav-link">
+              <i class="nav-icon bi bi-box-seam"></i>
+              <p>Sản phẩm (admin)</p>
+            </a>
+          </li>
         <?php endif; ?>
 
         <!-- Hệ thống -->
