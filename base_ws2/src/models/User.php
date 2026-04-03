@@ -43,6 +43,6 @@ class User
     // @return bool true nếu là hướng dẫn viên, false nếu không
     public function isGuide()
     {
-        return $this->role === 'huong_dan_vien';
+        return $this->role === 'user';
     }
 }
