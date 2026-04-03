@@ -42,6 +42,19 @@
             <a href="<?= BASE_URL ?>products/<?= (int) $product['product_id'] ?>" class="btn btn-sm btn-outline-success">
               Chi tiết
             </a>
+
+            <a href="<?= BASE_URL ?>admin/products/edit?id=<?= (int) $product['product_id'] ?>"
+              class="btn btn-sm btn-outline-primary">
+              Sửa
+            </a>
+
+            <a href="<?= BASE_URL ?>admin/products/delete?id=<?= (int) $product['product_id'] ?>"
+              class="btn btn-sm btn-outline-danger"
+              onclick="return confirm('Bạn có chắc muốn xoá sản phẩm này?')">
+              Xoá
+            </a>
+
+
           </div>
 
         </div>

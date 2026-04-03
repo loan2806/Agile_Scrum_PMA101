@@ -122,6 +122,31 @@ class ProductController
         setFlash('success', 'Thêm sản phẩm thành công');
         header('Location: ' . BASE_URL . 'admin/products');
     }
+    public function edit(): void
+    {
+        $db = getDB();
+        $id = (int)($_GET['id'] ?? 0);
+
+        if ($id <= 0) {
+            setFlash('error', 'ID không hợp lệ');
+            header('Location: ' . BASE_URL . 'admin/products');
+            exit;
+        }
+
+        $stmt = $db->prepare('SELECT * FROM products WHERE product_id = ?');
+        $stmt->execute([$id]);
+        $product = $stmt->fetch();
+
+        if (!$product) {
+            setFlash('error', 'Sản phẩm không tồn tại');
+            header('Location: ' . BASE_URL . 'admin/products');
+            exit;
+        }
+
+        view('products.edit', [
+            'product' => $product
+        ]);
+    }
 
     // Cập nhật sản phẩm
     public function update(): void
@@ -212,7 +237,7 @@ class ProductController
     public function delete(): void
     {
         $db = getDB();
-        $product_id = (int)($_POST['product_id'] ?? 0);
+        $product_id = (int)($_GET['id'] ?? $_POST['product_id'] ?? 0);
         if ($product_id <= 0) {
             setFlash('error', 'ID sản phẩm không hợp lệ');
             header('Location: ' . BASE_URL . 'admin/products');
