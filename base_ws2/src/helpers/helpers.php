@@ -14,7 +14,7 @@ function block_path(string $block): string
 }
 
 // Hàm view: nạp dữ liệu và hiển thị giao diện
-function view(string $view, array $data = []): void
+function view(string $view, array $data = [], bool $return = false)
 {
     $file = view_path($view);
 
@@ -22,10 +22,16 @@ function view(string $view, array $data = []): void
         throw new RuntimeException("View '{$view}' not found at {$file}");
     }
 
-    extract($data, EXTR_OVERWRITE); // biến hóa mảng $data thành biến riêng lẻ
+    extract($data);
+
+    if ($return) {
+        ob_start();
+        include $file;
+        return ob_get_clean();
+    }
+
     include $file;
 }
-
 // Hàm include block: nạp một block từ thư mục blocks(thành phần layouts)
 function block(string $block, array $data = []): void
 {
