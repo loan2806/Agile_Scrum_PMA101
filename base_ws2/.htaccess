@@ -2,11 +2,7 @@
 RewriteEngine On
 
 # Cập nhật nếu dự án chạy ở path khác
-<<<<<<< HEAD
 RewriteBase /Agile_Scrum_PMA101/base_ws2/
-=======
-RewriteBase /base_ws2/base_ws2/
->>>>>>> 8f18587a95ae52f595be5d3d1dea905717c60629
 
 # Route trang chủ
 RewriteRule ^$ index.php [L,QSA]

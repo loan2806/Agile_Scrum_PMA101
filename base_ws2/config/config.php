@@ -12,7 +12,7 @@ if (!defined('BASE_URL')) {
 return [
     'db' => [
         'host' => 'localhost', // Host cơ sở dữ liệu
-        'name' => 'fuit_shop_agile', // Tên cơ sở dữ liệu
+        'name' => 'shop_db_final', // Tên cơ sở dữ liệu
         'user' => 'root', // Tên người dùng
         'pass' => '', // Mật khẩu
         'charset' => 'utf8mb4', // Mã hóa
