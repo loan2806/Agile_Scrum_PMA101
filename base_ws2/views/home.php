@@ -110,27 +110,30 @@
       <?php if (!empty($products)): ?>
         <?php foreach ($products as $product): ?>
           <div class="col-6 col-md-3">
-            <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
+          <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
 
-              <div class="card-body d-flex flex-column">
-                <h6><?= htmlspecialchars($product['name']) ?></h6>
+            <img src="<?= BASE_URL ?>public/dist/assets/img/<?= $product['image'] ?>"
+                class="card-img-top"
+                style="height:180px; object-fit:cover;">
 
-                <p class="small text-muted">
-                  <?= htmlspecialchars($product['description'] ?? '') ?>
-                </p>
+            <div class="card-body d-flex flex-column">
+              <h6><?= htmlspecialchars($product['name']) ?></h6>
 
-                <p class="text-danger fw-bold">
-                  <?= number_format((float) $product['price']) ?> đ
-                </p>
+              <p class="small text-muted">
+                <?= htmlspecialchars($product['description'] ?? '') ?>
+              </p>
 
-                <a href="<?= BASE_URL ?>products/<?= (int) $product['product_id'] ?>"
-                   class="btn btn-sm btn-outline-success mt-auto">
-                  Xem chi tiết
-                </a>
-              </div>
+              <p class="text-danger fw-bold">
+                <?= number_format((float) $product['price']) ?> đ
+              </p>
 
+              <a href="<?= BASE_URL ?>products/<?= (int) $product['product_id'] ?>"
+                class="btn btn-sm btn-outline-success mt-auto">
+                Xem chi tiết
+              </a>
             </div>
-          </div>
+
+            </div>          </div>
         <?php endforeach; ?>
       <?php else: ?>
         <div class="col-12">

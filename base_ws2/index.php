@@ -1,64 +1,73 @@
 <?php
 
-// Nạp cấu hình chung của ứng dụng
+// CONFIG
 $config = require __DIR__ . '/config/config.php';
 
-// Nạp các file chứa hàm trợ giúp
-require_once __DIR__ . '/src/helpers/helpers.php'; // Helper chứa các hàm trợ giúp (hàm xử lý view, block, asset, session, ...)
-require_once __DIR__ . '/src/helpers/database.php'; // Helper kết nối database(kết nối với cơ sở dữ liệu)
+// HELPERS
+require_once __DIR__ . '/src/helpers/helpers.php';
+require_once __DIR__ . '/src/helpers/database.php';
 
-// Nạp các file chứa model
+// MODELS
 require_once __DIR__ . '/src/models/User.php';
 
-// Nạp các file chứa controller
+// CONTROLLERS
 require_once __DIR__ . '/src/controllers/HomeController.php';
 require_once __DIR__ . '/src/controllers/AuthController.php';
 require_once __DIR__ . '/src/controllers/CartController.php';
 require_once __DIR__ . '/src/controllers/ProductController.php';
 require_once __DIR__ . '/src/controllers/OrderController.php';
 require_once __DIR__ . '/src/controllers/AdminProductController.php';
+require_once __DIR__ . '/src/controllers/CategoryController.php'; // 🔥 THÊM
 
-// Khởi tạo các controller
+// INIT CONTROLLER
 $homeController = new HomeController();
 $authController = new AuthController();
 $cartController = new CartController();
 $productController = new ProductController();
 $orderController = new OrderController();
 $adminProductController = new AdminProductController();
+$categoryController = new CategoryController(); // 🔥 THÊM
 
-// Xác định route dựa trên tham số act (mặc định là trang chủ '/')
+// ROUTE
 $act = $_GET['act'] ?? '/';
 
+// PRODUCT DETAIL
 if (preg_match('#^products/(\d+)$#', $act, $matches)) {
     $productController->show((int) $matches[1]);
     exit;
 }
 
-// Match đảm bảo chỉ một action tương ứng được gọi
 match ($act) {
-    // Trang welcome (cho người chưa đăng nhập) - mặc định khi truy cập '/'
-    '/', 'welcome' => $homeController->welcome(),
 
-    // Trang home (cho người đã đăng nhập)
+    // ================= PUBLIC =================
+    '/', 'welcome' => $homeController->welcome(),
     'home' => $homeController->home(),
 
-    // Đường dẫn đăng nhập, đăng xuất
+    // ================= AUTH =================
     'login' => $authController->login(),
     'check-login' => $authController->checkLogin(),
     'register' => $authController->register(),
     'register/store' => $authController->storeRegister(),
     'logout' => $authController->logout(),
+
+    // ================= PRODUCT =================
+    'products' => $productController->index(),
+
+    // ================= CART =================
     'cart' => $cartController->index(),
     'cart/add' => $cartController->add(),
     'cart/update' => $cartController->update(),
     'cart/remove' => $cartController->remove(),
     'checkout' => $cartController->checkout(),
-    'products' => $productController->index(),
+    'checkout/buy-now' => $cartController->buyNow(),
+
+    // ================= USER =================
     'my-orders' => $orderController->myOrders(),
+    'order-detail' => $orderController->detail(),
     'profile' => $orderController->profile(),
     'profile/update' => $orderController->updateProfile(),
 
-    // Admin - sản phẩm
+    // ================= ADMIN PRODUCT =================
     'admin/products' => $adminProductController->index(),
     'admin/products/create' => $adminProductController->create(),
     'admin/products/store' => $adminProductController->store(),
@@ -66,6 +75,16 @@ match ($act) {
     'admin/products/update' => $adminProductController->update(),
     'admin/products/delete' => $adminProductController->delete(),
 
-    // Đường dẫn không tồn tại
+    // ================= ADMIN CATEGORY =================
+    'admin/categories' => $categoryController->index(),
+    'admin/categories/store' => $categoryController->store(),
+    'admin/categories/delete' => $categoryController->delete(),
+    'admin/categories/edit' => $categoryController->edit(),
+
+    // ================= ADMIN ORDER =================
+    'admin/orders' => $orderController->adminOrders(),
+    'admin/orders/update' => $orderController->updateStatus(),
+    'admin/dashboard' => $orderController->dashboard(),
+    // ================= 404 =================
     default => $homeController->notFound(),
 };

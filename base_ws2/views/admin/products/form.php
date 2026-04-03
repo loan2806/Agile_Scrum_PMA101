@@ -1,4 +1,4 @@
-<?php ob_start(); ?>
+
 <?php if (!empty($errors ?? [])): ?>
   <div class="alert alert-danger">
     <ul class="mb-0">
@@ -16,7 +16,7 @@ $data = $product ?? ($old ?? []);
 
 <div class="card">
   <div class="card-body">
-    <form method="post" action="<?= BASE_URL ?>admin/products/<?= $isEdit ? 'update' : 'store' ?>">
+    <form method="post" action="<?= BASE_URL ?>admin/products/<?= $isEdit ? 'update' : 'store' ?>" enctype="multipart/form-data">
       <?php if ($isEdit): ?>
         <input type="hidden" name="product_id" value="<?= (int) $data['product_id'] ?>">
       <?php endif; ?>
@@ -25,6 +25,7 @@ $data = $product ?? ($old ?? []);
         <label class="form-label">Tên sản phẩm</label>
         <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($data['name'] ?? '') ?>">
       </div>
+
       <div class="mb-3">
         <label class="form-label">Danh mục</label>
         <select name="category_id" class="form-select" required>
@@ -36,6 +37,7 @@ $data = $product ?? ($old ?? []);
           <?php endforeach; ?>
         </select>
       </div>
+
       <div class="row">
         <div class="col-md-4 mb-3">
           <label class="form-label">Giá (đ)</label>
@@ -50,10 +52,25 @@ $data = $product ?? ($old ?? []);
           <input type="text" name="unit" class="form-control" value="<?= htmlspecialchars($data['unit'] ?? 'kg') ?>">
         </div>
       </div>
+
       <div class="mb-3">
         <label class="form-label">Mô tả</label>
         <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($data['description'] ?? '') ?></textarea>
       </div>
+
+      <!-- Upload ảnh sản phẩm -->
+      <div class="mb-3">
+        <label class="form-label">Ảnh sản phẩm</label>
+        <input type="file" name="image" class="form-control" <?= $isEdit ? '' : 'required' ?>>
+
+        <?php if ($isEdit && !empty($data['image'])): ?>
+          <div class="mt-2">
+            <img src="<?= BASE_URL ?>public/dist/assets/img/<?= htmlspecialchars($data['image']) ?>" alt="<?= htmlspecialchars($data['name']) ?>" width="100" style="object-fit:cover; border-radius:4px;">
+            <input type="hidden" name="old_image" value="<?= htmlspecialchars($data['image']) ?>">
+          </div>
+        <?php endif; ?>
+      </div>
+
       <?php if ($isEdit): ?>
         <div class="mb-3">
           <label class="form-label">Trạng thái</label>

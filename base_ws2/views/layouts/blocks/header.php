@@ -48,8 +48,7 @@
                 alt="User Image"
               />
               <p>
-                <?= $currentUser->name ?> - <?= $currentUser->isAdmin() ? 'Quản trị viên' : 'Hướng dẫn viên' ?>
-                <small><?= date('M. Y') ?></small>
+              <?= $currentUser->isAdmin() ? 'Quản trị viên' : 'Khách hàng' ?>                <small><?= date('M. Y') ?></small>
               </p>
             </li>
             <!--end::User Image-->
