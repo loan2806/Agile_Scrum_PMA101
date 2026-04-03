@@ -4,13 +4,13 @@
 
   <!-- 🔥 BANNER CAROUSEL -->
   <div id="homeCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-    
+
     <div class="carousel-inner rounded-4 shadow">
 
       <div class="carousel-item active">
-        <img src="https://images.unsplash.com/photo-1574226516831-e1dff420e43e"
-             class="d-block w-100"
-             style="height:300px; object-fit:cover;">
+        <img src="https://theme.hstatic.net/200000377165/1001286359/14/slide_1_mb.jpg?v=476"
+          class="d-block w-100"
+          style="height:300px; object-fit:cover;">
         <div class="carousel-caption text-start">
           <h3>Trái cây tươi mỗi ngày</h3>
           <p>Chất lượng cao - Giá tốt</p>
@@ -18,9 +18,9 @@
       </div>
 
       <div class="carousel-item">
-        <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5"
-             class="d-block w-100"
-             style="height:300px; object-fit:cover;">
+        <img src="https://theme.hstatic.net/200000377165/1001286359/14/slide_2_mb.jpg?v=476"
+          class="d-block w-100"
+          style="height:300px; object-fit:cover;">
         <div class="carousel-caption text-start">
           <h3>Ưu đãi cực lớn</h3>
           <p>Giảm giá mỗi ngày</p>
@@ -28,9 +28,9 @@
       </div>
 
       <div class="carousel-item">
-        <img src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2"
-             class="d-block w-100"
-             style="height:300px; object-fit:cover;">
+        <img src="https://theme.hstatic.net/200000377165/1001286359/14/slide_3_mb.jpg?v=476"
+          class="d-block w-100"
+          style="height:300px; object-fit:cover;">
         <div class="carousel-caption text-start">
           <h3>Trái cây nhập khẩu</h3>
           <p>Táo Mỹ, nho Úc, cherry</p>
@@ -87,7 +87,7 @@
     <?php foreach (($categories ?? []) as $category): ?>
       <div class="col-6 col-md-3">
         <a class="card p-3 text-center h-100 shadow-sm border-0 rounded-3 hover-card"
-           href="<?= BASE_URL ?>products?category=<?= (int) $category['category_id'] ?>">
+          href="<?= BASE_URL ?>products?category=<?= (int) $category['category_id'] ?>">
           <strong><?= htmlspecialchars($category['name']) ?></strong>
         </a>
       </div>
@@ -96,11 +96,11 @@
 
   <!-- PRODUCTS -->
   <?php
-    $sections = [
-      '🔥 Trái ngon hôm nay' => $featuredProducts ?? [],
-      '🇻🇳 Trái cây Việt Nam' => $vietnamProducts ?? [],
-      '🌍 Trái cây nhập khẩu' => $importedProducts ?? [],
-    ];
+  $sections = [
+    '🔥 Trái ngon hôm nay' => $featuredProducts ?? [],
+    '🇻🇳 Trái cây Việt Nam' => $vietnamProducts ?? [],
+    '🌍 Trái cây nhập khẩu' => $importedProducts ?? [],
+  ];
   ?>
 
   <?php foreach ($sections as $label => $products): ?>
@@ -110,30 +110,31 @@
       <?php if (!empty($products)): ?>
         <?php foreach ($products as $product): ?>
           <div class="col-6 col-md-3">
-          <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
+            <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
 
-            <img src="<?= BASE_URL ?>public/dist/assets/img/<?= $product['image'] ?>"
+              <img src="<?= BASE_URL ?>public/dist/assets/img/<?= $product['image'] ?>"
                 class="card-img-top"
                 style="height:180px; object-fit:cover;">
 
-            <div class="card-body d-flex flex-column">
-              <h6><?= htmlspecialchars($product['name']) ?></h6>
+              <div class="card-body d-flex flex-column">
+                <h6><?= htmlspecialchars($product['name']) ?></h6>
 
-              <p class="small text-muted">
-                <?= htmlspecialchars($product['description'] ?? '') ?>
-              </p>
+                <p class="small text-muted">
+                  <?= htmlspecialchars($product['description'] ?? '') ?>
+                </p>
 
-              <p class="text-danger fw-bold">
-                <?= number_format((float) $product['price']) ?> đ
-              </p>
+                <p class="text-danger fw-bold">
+                  <?= number_format((float) $product['price']) ?> đ
+                </p>
 
-              <a href="<?= BASE_URL ?>products/<?= (int) $product['product_id'] ?>"
-                class="btn btn-sm btn-outline-success mt-auto">
-                Xem chi tiết
-              </a>
+                <a href="<?= BASE_URL ?>products/<?= (int) $product['product_id'] ?>"
+                  class="btn btn-sm btn-outline-success mt-auto">
+                  Xem chi tiết
+                </a>
+              </div>
+
             </div>
-
-            </div>          </div>
+          </div>
         <?php endforeach; ?>
       <?php else: ?>
         <div class="col-12">
@@ -148,15 +149,27 @@
 
 <!-- 🔥 CSS đẹp hơn -->
 <style>
-.hover-card:hover {
-  transform: translateY(-5px);
-  transition: 0.3s;
-}
+  .hover-card:hover {
+    transform: translateY(-5px);
+    transition: 0.3s;
+  }
 
-.product-card:hover {
-  transform: scale(1.03);
-  transition: 0.3s;
-}
+  .product-card:hover {
+    transform: scale(1.03);
+    transition: 0.3s;
+  }
+
+  .hover-card {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .hover-card:hover {
+    transform: translateY(-5px);
+    transition: 0.3s;
+    color: #198754;
+    /* xanh bootstrap */
+  }
 </style>
 
 <?php

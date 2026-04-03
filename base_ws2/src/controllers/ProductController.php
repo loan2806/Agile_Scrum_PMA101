@@ -102,7 +102,21 @@ class ProductController
             (sku, name, slug, price, sale_price, stock, unit, origin, weight_gram, is_featured, is_new, status, description, image, category_id, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())');
         $stmt->execute([
-            $sku, $name, $slug, $price, $sale_price, $stock, $unit, $origin, $weight_gram, $is_featured, $is_new, $status, $description, $image, $category_id
+            $sku,
+            $name,
+            $slug,
+            $price,
+            $sale_price,
+            $stock,
+            $unit,
+            $origin,
+            $weight_gram,
+            $is_featured,
+            $is_new,
+            $status,
+            $description,
+            $image,
+            $category_id
         ]);
 
         setFlash('success', 'Thêm sản phẩm thành công');
@@ -173,7 +187,21 @@ class ProductController
             name=?, slug=?, price=?, sale_price=?, stock=?, unit=?, origin=?, weight_gram=?, is_featured=?, is_new=?, status=?, description=?, image=?, category_id=?, updated_at=NOW()
             WHERE product_id=?');
         $stmt->execute([
-            $name, $slug, $price, $sale_price, $stock, $unit, $origin, $weight_gram, $is_featured, $is_new, $status, $description, $image, $category_id, $product_id
+            $name,
+            $slug,
+            $price,
+            $sale_price,
+            $stock,
+            $unit,
+            $origin,
+            $weight_gram,
+            $is_featured,
+            $is_new,
+            $status,
+            $description,
+            $image,
+            $category_id,
+            $product_id
         ]);
 
         setFlash('success', 'Cập nhật sản phẩm thành công');
@@ -208,5 +236,24 @@ class ProductController
 
         setFlash('success', 'Xóa sản phẩm thành công');
         header('Location: ' . BASE_URL . 'admin/products');
+    }
+    public function show($id)
+    {
+        $db = getDB();
+
+        $stmt = $db->prepare('SELECT p.*, c.name AS category_name
+                          FROM products p
+                          LEFT JOIN categories c ON c.category_id = p.category_id
+                          WHERE p.product_id = ? LIMIT 1');
+        $stmt->execute([$id]);
+        $product = $stmt->fetch();
+
+        if (!$product) {
+            die("Sản phẩm không tồn tại");
+        }
+
+        view('products/show', [
+            'product' => $product
+        ]);
     }
 }

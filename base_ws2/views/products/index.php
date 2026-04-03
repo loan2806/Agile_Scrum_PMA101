@@ -24,14 +24,26 @@
 
   <div class="row g-3">
     <?php foreach (($products ?? []) as $product): ?>
+
       <div class="col-6 col-md-3">
         <div class="card product-card h-100">
+
+          <!-- ẢNH -->
+          <img
+            src="<?= BASE_URL ?>public/dist/assets/img/<?= htmlspecialchars($product['image']) ?>"
+            class="card-img-top"
+            style="height:180px; object-fit:cover;"
+            alt="<?= htmlspecialchars($product['name']) ?>">
+
           <div class="card-body">
             <h6><?= htmlspecialchars($product['name']) ?></h6>
             <p class="small text-muted mb-2"><?= htmlspecialchars($product['category_name'] ?? '') ?></p>
             <p class="price mb-2"><?= number_format((float) $product['price']) ?> đ</p>
-            <a href="<?= BASE_URL ?>products/<?= (int) $product['product_id'] ?>" class="btn btn-sm btn-outline-success">Chi tiết</a>
+            <a href="<?= BASE_URL ?>products/<?= (int) $product['product_id'] ?>" class="btn btn-sm btn-outline-success">
+              Chi tiết
+            </a>
           </div>
+
         </div>
       </div>
     <?php endforeach; ?>
