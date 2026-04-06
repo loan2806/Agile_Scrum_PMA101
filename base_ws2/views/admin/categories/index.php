@@ -1,5 +1,3 @@
-<?php ob_start(); ?>
-
 <div class="container-fluid p-0">
 
   <!-- Alert -->
