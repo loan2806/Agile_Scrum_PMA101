@@ -28,6 +28,13 @@
               <p>Dashboard</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="<?= BASE_URL . 'admin/users' ?>"
+               class="nav-link <?= $act === 'admin/users' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-people"></i>
+              <p>Quản lý người dùng</p>
+            </a>
+          </li>
 
           <li class="nav-item">
             <a href="<?= BASE_URL . 'admin/products' ?>"
