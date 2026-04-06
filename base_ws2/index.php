@@ -85,6 +85,7 @@ match ($act) {
     'admin/orders' => $orderController->adminOrders(),
     'admin/orders/update' => $orderController->updateStatus(),
     'admin/dashboard' => $orderController->dashboard(),
+    'admin/order-detail' => $orderController->adminOrderDetail(),
     // ================= 404 =================
     default => $homeController->notFound(),
 };

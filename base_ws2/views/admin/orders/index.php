@@ -11,7 +11,7 @@
   <div class="row g-2">
     <?php foreach ($orders as $o): ?>
       <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-        
+
         <div class="card border-0 shadow-sm h-100 order-card">
 
           <div class="card-body py-2 px-3 d-flex flex-column justify-content-between">
@@ -23,12 +23,12 @@
                 <strong>#<?= $o['order_id'] ?></strong>
 
                 <?php
-                  $statusClass = [
-                    'Đang xử lý' => 'secondary',
-                    'Đang giao' => 'warning',
-                    'Đã giao' => 'success',
-                    'Đã hủy' => 'danger'
-                  ];
+                $statusClass = [
+                  'Đang xử lý' => 'secondary',
+                  'Đang giao' => 'warning',
+                  'Đã giao' => 'success',
+                  'Đã hủy' => 'danger'
+                ];
                 ?>
                 <span class="badge bg-<?= $statusClass[$o['status']] ?? 'secondary' ?>">
                   <?= $o['status'] ?>
@@ -53,14 +53,18 @@
             <form method="post" action="<?= BASE_URL ?>?act=admin/orders/update">
               <input type="hidden" name="order_id" value="<?= $o['order_id'] ?>">
 
-              <div class="d-flex gap-1">
+              <div class="d-flex gap-1 align-items-center">
+
                 <select name="status" class="form-select form-select-sm">
                   <option <?= $o['status'] == 'Đang xử lý' ? 'selected' : '' ?>>Đang xử lý</option>
                   <option <?= $o['status'] == 'Đang giao' ? 'selected' : '' ?>>Đang giao</option>
                   <option <?= $o['status'] == 'Đã giao' ? 'selected' : '' ?>>Đã giao</option>
                   <option <?= $o['status'] == 'Đã hủy' ? 'selected' : '' ?>>Đã hủy</option>
                 </select>
-
+                <a href="<?= BASE_URL ?>?act=admin/order-detail&id=<?= $o['order_id'] ?>"
+                  class="btn btn-sm btn-primary">
+                  👁
+                </a>
                 <button class="btn btn-sm btn-success px-2">
                   ✔
                 </button>
@@ -90,7 +94,7 @@
 
   .order-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
   }
 </style>
 

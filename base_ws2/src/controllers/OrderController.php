@@ -4,7 +4,6 @@ class OrderController
 {
     // ================= USER =================
 
-    // 🔹 T11: Danh sách đơn hàng của user
     public function myOrders(): void
     {
         requireLogin();
@@ -30,7 +29,6 @@ class OrderController
         ]);
     }
 
-    // 🔹 Xem chi tiết đơn hàng
     public function detail(): void
     {
         requireLogin();
@@ -127,9 +125,11 @@ class OrderController
 
     // ================= ADMIN =================
 
-    // 🔥 T14: Quản lý đơn hàng
+    // ✅ Danh sách đơn hàng
     public function adminOrders(): void
     {
+        requireAdmin();
+
         $db = getDB();
         $orders = [];
 
@@ -147,9 +147,48 @@ class OrderController
         ]);
     }
 
-    // 🔥 Update trạng thái đơn hàng
+    // ❗ THÊM MỚI: Xem chi tiết đơn hàng (ADMIN)
+    public function adminOrderDetail(): void
+    {
+        requireAdmin();
+
+        $db = getDB();
+        $orderId = (int) ($_GET['id'] ?? 0);
+
+        $order = null;
+        $items = [];
+
+        if ($db !== null && $orderId > 0) {
+            $stmt = $db->prepare("
+                SELECT o.*, c.fullname, c.phone, c.address
+                FROM orders o
+                JOIN customers c ON o.customer_id = c.customer_id
+                WHERE o.order_id = ?
+            ");
+            $stmt->execute([$orderId]);
+            $order = $stmt->fetch();
+
+            $stmt = $db->prepare("
+                SELECT od.*, p.name
+                FROM order_details od
+                JOIN products p ON p.product_id = od.product_id
+                WHERE od.order_id = ?
+            ");
+            $stmt->execute([$orderId]);
+            $items = $stmt->fetchAll();
+        }
+
+        view('admin.orders.detail', [
+            'order' => $order,
+            'items' => $items
+        ]);
+    }
+
+    // ✅ Update trạng thái
     public function updateStatus(): void
     {
+        requireAdmin();
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '?act=admin/orders');
             exit;
@@ -160,23 +199,25 @@ class OrderController
 
         $db = getDB();
         $db->prepare("UPDATE orders SET status = ? WHERE order_id = ?")
-           ->execute([$status, $orderId]);
+            ->execute([$status, $orderId]);
 
         setFlash('success', 'Cập nhật trạng thái thành công');
 
         header('Location: ' . BASE_URL . '?act=admin/orders');
         exit;
     }
+
+    // ✅ Dashboard (FIX lỗi render)
     public function dashboard()
     {
         requireAdmin();
-    
+
         $db = getDB();
-    
+
         $totalOrders = $db->query("SELECT COUNT(*) FROM orders")->fetchColumn();
         $revenue = $db->query("SELECT SUM(total) FROM orders")->fetchColumn();
         $totalProducts = $db->query("SELECT COUNT(*) FROM products")->fetchColumn();
-    
+
         $stmt = $db->query("
             SELECT 
                 MONTH(order_date) as month,
@@ -186,20 +227,12 @@ class OrderController
             ORDER BY month
         ");
         $chartData = $stmt->fetchAll();
-    
-        // 🔥 render content trước
+
         view('admin.dashboard', [
             'totalOrders' => $totalOrders,
             'revenue' => $revenue,
             'totalProducts' => $totalProducts,
             'chartData' => $chartData
-        ]);        $content = ob_get_clean();
-    
-        // 🔥 dùng layout dashboard
-        view('layouts.dashboard', [
-            'title' => 'Dashboard',
-            'pageTitle' => 'Dashboard',
-            'content' => $content
         ]);
     }
 }
