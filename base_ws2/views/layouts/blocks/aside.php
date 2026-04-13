@@ -1,47 +1,68 @@
+<?php $act = $_GET['act'] ?? ''; ?>
+
 <!--begin::Sidebar-->
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-  <!--begin::Sidebar Brand-->
+
+  <!-- Logo -->
   <div class="sidebar-brand">
     <a href="<?= BASE_URL . 'home' ?>" class="brand-link">
-      <img
-        src="<?= asset('dist/assets/img/AdminLTELogo.png') ?>"
-        alt="Logo"
-        class="brand-image opacity-75 shadow"
-      />
+      <img src="<?= asset('dist/assets/img/AdminLTELogo.png') ?>" class="brand-image opacity-75 shadow">
       <span class="brand-text fw-light">Fruit Shop</span>
     </a>
   </div>
-  <!--end::Sidebar Brand-->
 
   <div class="sidebar-wrapper">
     <nav class="mt-2">
-      <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
-        
-        <!-- Trang chu -->
-        <li class="nav-item">
-          <a href="<?= BASE_URL . 'home' ?>" class="nav-link">
-            <i class="nav-icon bi bi-speedometer"></i>
-            <p>San pham</p>
-          </a>
-        </li>
+      <ul class="nav sidebar-menu flex-column">
 
-        <li class="nav-item">
-          <a href="<?= BASE_URL . 'cart' ?>" class="nav-link">
-            <i class="nav-icon bi bi-cart3"></i>
-            <p>Gio hang</p>
-          </a>
-        </li>
+        <!-- USER -->
 
+        <!-- ADMIN -->
         <?php if (isAdmin()): ?>
-        <li class="nav-item">
-          <a href="<?= BASE_URL . 'home' ?>" class="nav-link">
-            <i class="nav-icon bi bi-person-gear"></i>
-            <p>Quan tri</p>
-          </a>
-        </li>
+          <li class="nav-header">QUẢN TRỊ</li>
+
+          <li class="nav-item">
+            <a href="<?= BASE_URL . 'admin/dashboard' ?>"
+               class="nav-link <?= $act === 'admin/dashboard' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-speedometer2"></i>
+              <p>Dashboard</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= BASE_URL . 'admin/users' ?>"
+               class="nav-link <?= $act === 'admin/users' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-people"></i>
+              <p>Quản lý người dùng</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?= BASE_URL . 'admin/products' ?>"
+               class="nav-link <?= $act === 'admin/products' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-box-seam"></i>
+              <p>Quản lý sản phẩm</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?= BASE_URL . 'admin/categories' ?>"
+               class="nav-link <?= $act === 'admin/categories' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-tags"></i>
+              <p>Danh mục</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?= BASE_URL . 'admin/orders' ?>"
+               class="nav-link <?= $act === 'admin/orders' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-bag-check"></i>
+              <p>Quản lý đơn hàng</p>
+            </a>
+          </li>
+
         <?php endif; ?>
 
-        <!-- Hệ thống -->
+        <!-- SYSTEM -->
         <li class="nav-header">HỆ THỐNG</li>
 
         <li class="nav-item">
