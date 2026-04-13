@@ -1,5 +1,14 @@
 <?php
 
+use AdminProductController;
+use AuthController;
+use CartController;
+use CategoryController;
+use HomeController;
+use OrderController;
+use ProductController;
+use UserController;
+
 // CONFIG
 $config = require __DIR__ . '/config/config.php';
 
