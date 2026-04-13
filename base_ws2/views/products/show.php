@@ -12,62 +12,87 @@
   <?php endif; ?>
 
   <!-- PRODUCT DETAIL -->
-  <div class="card shadow-lg border-0 rounded-4 mb-4">
+  <div class="card shadow-lg border-0 rounded-4 mb-4 overflow-hidden">
     <div class="card-body p-4">
-      <div class="row">
+      <div class="row g-4 align-items-start">
 
-        <!-- LEFT: INFO -->
-        <div class="col-md-7">
-          <h2 class="fw-bold"><?= htmlspecialchars($product['name']) ?></h2>
-
-          <p class="text-muted mb-2">
-            <?= htmlspecialchars($product['category_name'] ?? '') ?>
-          </p>
-
-          <p><?= htmlspecialchars($product['description'] ?? '') ?></p>
-
-          <h3 class="text-danger fw-bold">
-            <?= number_format((float) $product['price']) ?> đ
-          </h3>
-
-          <p class="mt-2">
-            <strong>Tồn kho:</strong> <?= (int) $product['stock'] ?>
-          </p>
+        <!-- Ảnh sản phẩm -->
+        <div class="col-md-5">
+          <?php
+            $hasImage = !empty($product['image'])
+              && file_exists(BASE_PATH . '/public/dist/assets/img/' . $product['image']);
+          ?>
+          <?php if ($hasImage): ?>
+            <div class="ratio ratio-1x1 rounded-4 overflow-hidden shadow-sm bg-light">
+              <img
+                src="<?= htmlspecialchars(asset('dist/assets/img/' . $product['image']), ENT_QUOTES, 'UTF-8') ?>"
+                alt="<?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>"
+                class="w-100 h-100 object-fit-cover"
+              >
+            </div>
+          <?php else: ?>
+            <div class="ratio ratio-1x1 rounded-4 bg-light border d-flex align-items-center justify-content-center text-muted">
+              <span>Chưa có ảnh</span>
+            </div>
+          <?php endif; ?>
         </div>
 
-        <!-- RIGHT: BUY -->
-        <div class="col-md-5">
-          <form method="post">
+        <div class="col-md-7">
+          <div class="row">
 
-            <input type="hidden" name="product_id" value="<?= (int) $product['product_id'] ?>">
+            <!-- INFO -->
+            <div class="col-12 mb-3">
+              <h2 class="fw-bold"><?= htmlspecialchars($product['name']) ?></h2>
 
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Số lượng</label>
-              <input class="form-control rounded-3"
-                     type="number"
-                     name="quantity"
-                     value="1"
-                     min="1"
-                     max="<?= (int) $product['stock'] ?>">
+              <p class="text-muted mb-2">
+                <?= htmlspecialchars($product['category_name'] ?? '') ?>
+              </p>
+
+              <p class="mb-3"><?= nl2br(htmlspecialchars($product['description'] ?? '')) ?></p>
+
+              <h3 class="text-danger fw-bold mb-2">
+                <?= number_format((float) $product['price']) ?> đ
+              </h3>
+
+              <p class="mb-0">
+                <strong>Tồn kho:</strong> <?= (int) $product['stock'] ?>
+              </p>
             </div>
 
-            <div class="d-flex gap-2">
+            <!-- BUY -->
+            <div class="col-12">
+              <form method="post">
 
-              <!-- Thêm vào giỏ -->
-              <button class="btn btn-outline-success w-50"
-                      formaction="<?= BASE_URL ?>cart/add">
-                🛒 Thêm vào giỏ
-              </button>
+                <input type="hidden" name="product_id" value="<?= (int) $product['product_id'] ?>">
 
-              <!-- Mua ngay -->
-              <button class="btn btn-danger w-50 fw-bold"
-                      formaction="<?= BASE_URL ?>checkout/buy-now">
-                ⚡ Mua ngay
-              </button>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Số lượng</label>
+                  <input class="form-control rounded-3"
+                         type="number"
+                         name="quantity"
+                         value="1"
+                         min="1"
+                         max="<?= (int) $product['stock'] ?>">
+                </div>
 
+                <div class="d-flex flex-wrap gap-2">
+
+                  <button class="btn btn-outline-success flex-grow-1"
+                          formaction="<?= BASE_URL ?>cart/add">
+                    🛒 Thêm vào giỏ
+                  </button>
+
+                  <button class="btn btn-danger flex-grow-1 fw-bold"
+                          formaction="<?= BASE_URL ?>checkout/buy-now">
+                    ⚡ Mua ngay
+                  </button>
+
+                </div>
+
+              </form>
             </div>
 
-          </form>
+          </div>
         </div>
 
       </div>

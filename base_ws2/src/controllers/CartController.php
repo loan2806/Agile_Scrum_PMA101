@@ -48,6 +48,10 @@ class CartController
             }
         }
 
+        $checkoutOld = $_SESSION['checkout_old'] ?? null;
+        $checkoutErrors = $_SESSION['checkout_errors'] ?? [];
+        unset($_SESSION['checkout_old'], $_SESSION['checkout_errors']);
+
         view('cart.index', [
             'title' => 'Giỏ hàng',
             'items' => $items,
@@ -55,6 +59,8 @@ class CartController
             'cartCount' => cartCount(),
             'flashSuccess' => getFlash('success'),
             'flashError' => getFlash('error'),
+            'checkoutOld' => $checkoutOld,
+            'checkoutErrors' => $checkoutErrors,
         ]);
     }
 
@@ -157,15 +163,30 @@ class CartController
 
         $db = getDB();
 
-        $fullname = trim($_POST['fullname'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
-        $address = trim($_POST['address'] ?? '');
+        $fullname = trim((string) ($_POST['fullname'] ?? ''));
+        $phone = trim((string) ($_POST['phone'] ?? ''));
+        $address = trim((string) ($_POST['address'] ?? ''));
+        $paymentMethod = $_POST['payment_method'] ?? 'cash';
+        if (!in_array($paymentMethod, ['cash', 'transfer'], true)) {
+            $paymentMethod = 'cash';
+        }
+        $paymentDb = $paymentMethod === 'transfer' ? 'bank_transfer' : 'cash';
 
-        if (!$fullname || !$phone || !$address) {
-            setFlash('error', 'Thiếu thông tin');
+        [$checkoutErrors, $phoneNormalized] = $this->validateCheckoutForm($fullname, $phone, $address, $paymentMethod);
+        if (!empty($checkoutErrors)) {
+            $_SESSION['checkout_old'] = [
+                'fullname' => $fullname,
+                'phone' => $phone,
+                'address' => $address,
+                'payment_method' => $paymentMethod,
+            ];
+            $_SESSION['checkout_errors'] = $checkoutErrors;
+            setFlash('error', 'Vui lòng kiểm tra lại thông tin đặt hàng.');
             header('Location: ' . BASE_URL . '?act=cart');
             exit;
         }
+
+        $phone = $phoneNormalized;
 
         try {
             $db->beginTransaction();
@@ -187,9 +208,9 @@ class CartController
                    ->execute([$item['quantity'], $pid]);
             }
 
-            $db->prepare("INSERT INTO orders (customer_id, order_date, status, total)
-                          VALUES (1, NOW(), 'Đang xử lý', ?)")
-               ->execute([$total]);
+            $db->prepare("INSERT INTO orders (customer_id, order_date, status, total, payment_method)
+                          VALUES (1, NOW(), 'Đang xử lý', ?, ?)")
+               ->execute([$total, $paymentDb]);
 
             $orderId = $db->lastInsertId();
 
@@ -281,4 +302,50 @@ public function remove(): void
     header('Location: ' . BASE_URL . '?act=cart');
     exit;
 }
+
+    private static function normalizeVnPhone(string $raw): string
+    {
+        $d = preg_replace('/\D+/', '', $raw);
+        if (str_starts_with($d, '84') && strlen($d) >= 10) {
+            $d = '0' . substr($d, 2);
+        }
+        return $d;
+    }
+
+    /**
+     * @return array{0: array<int, string>, 1: string}
+     */
+    private function validateCheckoutForm(string $fullname, string $phone, string $address, string $paymentMethod): array
+    {
+        $errors = [];
+
+        $nameLen = mb_strlen($fullname);
+        if ($nameLen < 2) {
+            $errors[] = 'Họ tên phải có ít nhất 2 ký tự.';
+        } elseif ($nameLen > 120) {
+            $errors[] = 'Họ tên không được vượt quá 120 ký tự.';
+        } elseif (!preg_match('/\p{L}/u', $fullname)) {
+            $errors[] = 'Họ tên phải có ít nhất một chữ cái.';
+        }
+
+        $phoneNorm = self::normalizeVnPhone($phone);
+        if ($phoneNorm === '') {
+            $errors[] = 'Vui lòng nhập số điện thoại.';
+        } elseif (!preg_match('/^0[0-9]{9,10}$/', $phoneNorm)) {
+            $errors[] = 'Số điện thoại không hợp lệ (10–11 chữ số, bắt đầu bằng 0, ví dụ 09xxxxxxxx).';
+        }
+
+        $addrLen = mb_strlen($address);
+        if ($addrLen < 10) {
+            $errors[] = 'Địa chỉ giao hàng phải có ít nhất 10 ký tự.';
+        } elseif ($addrLen > 500) {
+            $errors[] = 'Địa chỉ không được vượt quá 500 ký tự.';
+        }
+
+        if (!in_array($paymentMethod, ['cash', 'transfer'], true)) {
+            $errors[] = 'Phương thức thanh toán không hợp lệ.';
+        }
+
+        return [$errors, $phoneNorm];
+    }
 }

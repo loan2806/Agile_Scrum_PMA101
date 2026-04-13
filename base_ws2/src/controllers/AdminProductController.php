@@ -2,6 +2,37 @@
 
 class AdminProductController
 {
+    private function uploadImage(array $file, array &$errors): string
+    {
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            $errors[] = 'Upload ảnh thất bại.';
+            return '';
+        }
+
+        $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+        $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowedExts, true)) {
+            $errors[] = 'Ảnh phải có định dạng: jpg, jpeg, png, webp, gif.';
+            return '';
+        }
+
+        $targetDir = BASE_PATH . '/public/dist/assets/img';
+        if (!is_dir($targetDir) && !mkdir($targetDir, 0777, true) && !is_dir($targetDir)) {
+            $errors[] = 'Không tạo được thư mục chứa ảnh.';
+            return '';
+        }
+
+        $imageName = uniqid('prod_', true) . '.' . $ext;
+        $targetPath = $targetDir . '/' . $imageName;
+
+        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+            $errors[] = 'Không thể lưu ảnh lên server.';
+            return '';
+        }
+
+        return $imageName;
+    }
+
     private function requireAdminAccess(): void
     {
         requireLogin();
@@ -17,7 +48,7 @@ class AdminProductController
         $db = getDB();
         $products = [];
         if ($db !== null) {
-            $stmt = $db->query('SELECT p.product_id, p.name, p.price, p.stock, p.unit, p.status, c.name AS category_name
+            $stmt = $db->query('SELECT p.product_id, p.name, p.image, p.price, p.stock, p.unit, p.status, c.name AS category_name
                                 FROM products p
                                 LEFT JOIN categories c ON c.category_id = p.category_id
                                 ORDER BY p.product_id DESC');
@@ -54,6 +85,7 @@ class AdminProductController
         $unit = trim($_POST['unit'] ?? 'kg');
         $description = trim($_POST['description'] ?? '');
         $categoryId = (int) ($_POST['category_id'] ?? 0);
+        $image = '';
 
         $errors = [];
         if ($name === '') {
@@ -65,10 +97,17 @@ class AdminProductController
         if ($categoryId <= 0) {
             $errors[] = 'Vui lòng chọn danh mục';
         }
+        if (empty($_FILES['image']['name'])) {
+            $errors[] = 'Vui lòng chọn ảnh sản phẩm';
+        }
 
         $db = getDB();
         if ($db === null) {
             $errors[] = 'Không kết nối được cơ sở dữ liệu';
+        }
+
+        if (empty($errors) && !empty($_FILES['image']['name'])) {
+            $image = $this->uploadImage($_FILES['image'], $errors);
         }
 
         if (!empty($errors)) {
@@ -82,8 +121,8 @@ class AdminProductController
             return;
         }
 
-        $stmt = $db->prepare('INSERT INTO products (name, price, stock, unit, description, category_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$name, $price, $stock, $unit, $description, $categoryId, 'active']);
+        $stmt = $db->prepare('INSERT INTO products (name, image, price, stock, unit, description, category_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$name, $image, $price, $stock, $unit, $description, $categoryId, 'active']);
         setFlash('success', 'Thêm sản phẩm thành công.');
         header('Location: ' . BASE_URL . 'admin/products');
         exit;
@@ -138,6 +177,8 @@ class AdminProductController
         $description = trim($_POST['description'] ?? '');
         $categoryId = (int) ($_POST['category_id'] ?? 0);
         $status = $_POST['status'] ?? 'active';
+        $oldImage = trim($_POST['old_image'] ?? '');
+        $image = $oldImage;
 
         if ($id <= 0) {
             header('Location: ' . BASE_URL . 'admin/products');
@@ -159,11 +200,18 @@ class AdminProductController
         if ($db === null) {
             $errors[] = 'Không kết nối được cơ sở dữ liệu';
         }
+        if (empty($errors) && !empty($_FILES['image']['name'])) {
+            $newImage = $this->uploadImage($_FILES['image'], $errors);
+            if ($newImage !== '') {
+                $image = $newImage;
+            }
+        }
 
         if (!empty($errors)) {
             $categories = $db ? $db->query('SELECT category_id, name FROM categories ORDER BY name')->fetchAll() : [];
             $product = $_POST;
             $product['product_id'] = $id;
+            $product['image'] = $oldImage;
             view('admin.products.form', [
                 'title' => 'Cập nhật sản phẩm',
                 'errors' => $errors,
@@ -173,8 +221,16 @@ class AdminProductController
             return;
         }
 
-        $stmt = $db->prepare('UPDATE products SET name = ?, price = ?, stock = ?, unit = ?, description = ?, category_id = ?, status = ? WHERE product_id = ?');
-        $stmt->execute([$name, $price, $stock, $unit, $description, $categoryId, $status, $id]);
+        $stmt = $db->prepare('UPDATE products SET name = ?, image = ?, price = ?, stock = ?, unit = ?, description = ?, category_id = ?, status = ? WHERE product_id = ?');
+        $stmt->execute([$name, $image, $price, $stock, $unit, $description, $categoryId, $status, $id]);
+
+        if (
+            $oldImage !== ''
+            && $image !== $oldImage
+            && file_exists(BASE_PATH . '/public/dist/assets/img/' . $oldImage)
+        ) {
+            unlink(BASE_PATH . '/public/dist/assets/img/' . $oldImage);
+        }
         setFlash('success', 'Cập nhật sản phẩm thành công.');
         header('Location: ' . BASE_URL . 'admin/products');
         exit;

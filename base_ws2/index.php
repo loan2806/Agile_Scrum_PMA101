@@ -1,13 +1,5 @@
 <?php
 
-use AdminProductController;
-use AuthController;
-use CartController;
-use CategoryController;
-use HomeController;
-use OrderController;
-use ProductController;
-use UserController;
 
 // CONFIG
 $config = require __DIR__ . '/config/config.php';
@@ -94,6 +86,7 @@ match ($act) {
 
     // ================= ADMIN ORDER =================
     'admin/orders' => $orderController->adminOrders(),
+    'admin/order-detail' => $orderController->adminOrderDetail(),
     'admin/orders/update' => $orderController->updateStatus(),
     'admin/dashboard' => $orderController->dashboard(),
 
