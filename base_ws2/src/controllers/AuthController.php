@@ -40,20 +40,33 @@ class AuthController
         $db = getDB();
         $stmt = $db->prepare('SELECT * FROM users WHERE email = ? LIMIT 1');
         $stmt->execute([$email]);
-        $row = $stmt->fetch();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
     
-        $passwordMatched = false;
-        if ($row) {
-            $passwordMatched = password_verify($password, $row['password']) 
-                || $password === $row['password'];
-        }
-    
-        if (!$row || !$passwordMatched || (int)$row['status'] !== 1) {
-            $errors[] = 'Email hoặc mật khẩu không đúng';
+        // ❌ Không tồn tại email
+        if (!$row) {
+            $errors[] = 'Email không tồn tại';
             view('auth.login', compact('errors', 'email'));
             return;
         }
     
+        // ❌ Sai mật khẩu
+        $passwordMatched = password_verify($password, $row['password']) 
+            || $password === $row['password'];
+    
+        if (!$passwordMatched) {
+            $errors[] = 'Mật khẩu không đúng';
+            view('auth.login', compact('errors', 'email'));
+            return;
+        }
+    
+        // 🔒 BỊ KHÓA
+        if ((int)$row['status'] !== 1) {
+            $errors[] = 'Tài khoản đã bị khóa';
+            view('auth.login', compact('errors', 'email'));
+            return;
+        }
+    
+        // ✅ LOGIN THÀNH CÔNG
         $user = new User([
             'id' => (int)$row['user_id'],
             'name' => $row['username'],
@@ -64,15 +77,14 @@ class AuthController
     
         loginUser($user);
     
-        // 🔥 FIX QUAN TRỌNG
+        // Redirect theo role
         if ($row['role'] === 'admin') {
             header('Location: ' . BASE_URL . 'admin/dashboard');
         } else {
             header('Location: ' . BASE_URL . 'home');
         }
         exit;
-    }
-    public function register()
+    }    public function register()
     {
         if (isLoggedIn()) {
             header('Location: ' . BASE_URL . 'home');

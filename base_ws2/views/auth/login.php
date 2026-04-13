@@ -60,14 +60,14 @@ ob_start();
                     </div>
                     <h2><strong>Fruit Shop</strong></h2>
                 </a>
-                <p class="mb-0">Đăng nhập để đặt mua hoa quả</p>
+                <p class="mb-0">Đăng nhập để đặt mua hoa quả </p>
             </div>
 
             <!-- Body -->
             <div class="card-body p-4">
 
                 <h4 class="text-center mb-4 fw-bold">
-                    Đăng nhập hệ thống
+                    Đăng Nhập Hệ Thống
                 </h4>
 
                 <?php if (!empty($errors)): ?>
@@ -122,22 +122,30 @@ ob_start();
                     <!-- Remember -->
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" name="remember_me">
-                        <label class="form-check-label">Ghi nhớ đăng nhập</label>
+                        <label class="form-check-label">Ghi nhớ đăng nhập </label>
                     </div>
 
                     <!-- Button -->
                     <div class="d-grid">
                         <button class="btn btn-login btn-lg">
                             <i class="bi bi-box-arrow-in-right me-2"></i>
-                            Đăng nhập
+                            Đăng Nhập
                         </button>
                     </div>
                 </form>
+                <!-- Register -->
+                <div class="text-center mt-3">
+                    <span>Chưa có tài khoản?</span>
+                    <a href="<?= BASE_URL ?>register" class="text-decoration-none fw-bold text-danger">
+                        Đăng Ký Ngay
+                    </a>
+                </div>
 
                 <!-- Back -->
                 <div class="text-center mt-3">
                     <a href="<?= BASE_URL ?>" class="text-decoration-none">
-                        ← Quay lại trang chủ
+                        ← Quay về trang chủ
+
                     </a>
                 </div>
 
