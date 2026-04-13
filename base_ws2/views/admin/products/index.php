@@ -62,8 +62,8 @@
               <td class="fw-bold">#<?= (int)$p['product_id'] ?></td>
 
               <td>
-                <?php if (!empty($p['image']) && file_exists(__DIR__ . '/../../public/dist/assets/img/' . $p['image'])): ?>
-                  <img src="<?= BASE_URL ?>public/dist/assets/img/<?= htmlspecialchars($p['image']) ?>" alt="" class="img-thumbnail" style="width:50px;height:50px;object-fit:cover;">
+                <?php if (!empty($p['image']) && file_exists(BASE_PATH . '/public/dist/assets/img/' . $p['image'])): ?>
+                  <img src="<?= htmlspecialchars(asset('dist/assets/img/' . $p['image']), ENT_QUOTES, 'UTF-8') ?>" alt="" class="img-thumbnail" style="width:50px;height:50px;object-fit:cover;">
                 <?php else: ?>
                   <span class="text-muted">No image</span>
                 <?php endif; ?>

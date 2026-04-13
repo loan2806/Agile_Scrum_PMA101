@@ -162,7 +162,7 @@ class OrderController
             $stmt = $db->prepare("
                 SELECT o.*, c.fullname, c.phone, c.address
                 FROM orders o
-                JOIN customers c ON o.customer_id = c.customer_id
+                LEFT JOIN customers c ON c.customer_id = o.customer_id
                 WHERE o.order_id = ?
             ");
             $stmt->execute([$orderId]);
@@ -176,6 +176,12 @@ class OrderController
             ");
             $stmt->execute([$orderId]);
             $items = $stmt->fetchAll();
+        }
+
+        if ($orderId <= 0 || empty($order)) {
+            setFlash('error', 'Không tìm thấy đơn hàng.');
+            header('Location: ' . BASE_URL . '?act=admin/orders');
+            exit;
         }
 
         view('admin.orders.detail', [

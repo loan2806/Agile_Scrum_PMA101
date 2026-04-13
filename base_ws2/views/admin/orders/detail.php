@@ -20,9 +20,9 @@
 
                     <h6 class="fw-bold mb-3">Thông tin khách hàng</h6>
 
-                    <p class="mb-1"><strong>👤 Tên:</strong> <?= $order['fullname'] ?></p>
-                    <p class="mb-1"><strong>📞 SĐT:</strong> <?= $order['phone'] ?></p>
-                    <p class="mb-2"><strong>📍 Địa chỉ:</strong> <?= $order['address'] ?></p>
+                    <p class="mb-1"><strong>👤 Tên:</strong> <?= htmlspecialchars((string) ($order['fullname'] ?? '—')) ?></p>
+                    <p class="mb-1"><strong>📞 SĐT:</strong> <?= htmlspecialchars((string) ($order['phone'] ?? '—')) ?></p>
+                    <p class="mb-2"><strong>📍 Địa chỉ:</strong> <?= htmlspecialchars((string) ($order['address'] ?? '—')) ?></p>
 
                     <hr>
 
@@ -55,10 +55,10 @@
                         <input type="hidden" name="order_id" value="<?= $order['order_id'] ?>">
 
                         <select name="status" class="form-select form-select-sm mb-2">
-                            <option <?= $order['status'] == 'Đang xử lý' ? 'selected' : '' ?>>Đang xử lý</option>
-                            <option <?= $order['status'] == 'Đang giao' ? 'selected' : '' ?>>Đang giao</option>
-                            <option <?= $order['status'] == 'Đã giao' ? 'selected' : '' ?>>Đã giao</option>
-                            <option <?= $order['status'] == 'Đã hủy' ? 'selected' : '' ?>>Đã hủy</option>
+                            <option value="Đang xử lý" <?= ($order['status'] ?? '') === 'Đang xử lý' ? 'selected' : '' ?>>Đang xử lý</option>
+                            <option value="Đang giao" <?= ($order['status'] ?? '') === 'Đang giao' ? 'selected' : '' ?>>Đang giao</option>
+                            <option value="Đã giao" <?= ($order['status'] ?? '') === 'Đã giao' ? 'selected' : '' ?>>Đã giao</option>
+                            <option value="Đã hủy" <?= ($order['status'] ?? '') === 'Đã hủy' ? 'selected' : '' ?>>Đã hủy</option>
                         </select>
 
                         <button class="btn btn-sm btn-success w-100">✔ Cập nhật trạng thái</button>
