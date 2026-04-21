@@ -24,12 +24,14 @@ class HomeController
         if ($db !== null) {
             $categories = $db->query('SELECT category_id, name FROM categories ORDER BY name')->fetchAll();
             $featuredProducts = $db->query('SELECT product_id, name, price, stock, description, image FROM products ORDER BY product_id DESC LIMIT 8')->fetchAll();
-            $vnStmt = $db->prepare('SELECT p.product_id, p.name, p.price, p.stock, p.description, p.image
+            $vnStmt = $db->prepare("SELECT p.product_id, p.name, p.price, p.stock, p.description, p.image
                                     FROM products p
                                     INNER JOIN categories c ON c.category_id = p.category_id
-                                    WHERE c.name LIKE ?
-                                    ORDER BY p.product_id DESC LIMIT 8');
-            $vnStmt->execute(['%Viet%']);
+                                    WHERE c.slug IN ('trai-cay-viet-nam', 'trai-cay-noi-dia')
+                                       OR c.name LIKE '%Việt Nam%'
+                                       OR c.name LIKE '%nội địa%'
+                                    ORDER BY p.product_id DESC LIMIT 8");
+            $vnStmt->execute();
             $vietnamProducts = $vnStmt->fetchAll();
 
             $importStmt = $db->prepare('SELECT p.product_id, p.name, p.price, p.stock, p.description, p.image

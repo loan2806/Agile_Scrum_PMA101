@@ -98,7 +98,7 @@
   <?php
   $sections = [
     '🔥 Trái ngon hôm nay' => $featuredProducts ?? [],
-    '🇻🇳 Trái cây Việt Nam' => $vietnamProducts ?? [],
+    ' Trái cây Việt Nam' => $vietnamProducts ?? [],
     '🌍 Trái cây nhập khẩu' => $importedProducts ?? [],
   ];
   ?>

@@ -10,9 +10,11 @@ class ProductController
         $categories = [];
         $keyword = trim($_GET['q'] ?? '');
         $categoryId = (int)($_GET['category'] ?? 0);
+        $categorySlug = trim($_GET['category_slug'] ?? '');
+        $group = trim($_GET['group'] ?? '');
 
         if ($db) {
-            $categories = $db->query('SELECT category_id, name FROM categories ORDER BY name')->fetchAll();
+            $categories = $db->query('SELECT category_id, name, slug FROM categories ORDER BY name')->fetchAll();
 
             $sql = 'SELECT p.product_id, p.sku, p.name, p.slug, p.price, p.sale_price, p.stock, p.unit, p.origin, p.weight_gram, p.is_featured, p.is_new, p.status, p.description, p.image, c.name AS category_name
                     FROM products p
@@ -27,6 +29,12 @@ class ProductController
             if ($categoryId > 0) {
                 $sql .= ' AND p.category_id = ?';
                 $params[] = $categoryId;
+            } elseif ($categorySlug !== '') {
+                $sql .= ' AND c.slug = ?';
+                $params[] = $categorySlug;
+            }
+            if ($group === 'featured') {
+                $sql .= ' AND p.is_featured = 1';
             }
 
             $sql .= ' ORDER BY p.product_id DESC';

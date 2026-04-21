@@ -252,10 +252,19 @@ class AdminProductController
 
         $db = getDB();
         if ($db !== null) {
-            $stmt = $db->prepare('DELETE FROM products WHERE product_id = ?');
-            $stmt->execute([$id]);
+            try {
+                $stmt = $db->prepare('DELETE FROM products WHERE product_id = ?');
+                $stmt->execute([$id]);
+                setFlash('success', 'Đã xóa sản phẩm.');
+            } catch (Throwable $e) {
+                // Nếu sản phẩm đã phát sinh đơn hàng thì chuyển sang ẩn thay vì xóa cứng.
+                $stmt = $db->prepare("UPDATE products SET status = 'inactive' WHERE product_id = ?");
+                $stmt->execute([$id]);
+                setFlash('success', 'Sản phẩm đã có dữ liệu liên quan, hệ thống đã chuyển sang trạng thái ẩn.');
+            }
+        } else {
+            setFlash('error', 'Không kết nối được cơ sở dữ liệu.');
         }
-        setFlash('success', 'Đã xóa sản phẩm.');
         header('Location: ' . BASE_URL . 'admin/products');
         exit;
     }
